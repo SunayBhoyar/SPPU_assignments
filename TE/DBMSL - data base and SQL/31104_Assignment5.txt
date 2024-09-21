@@ -1,0 +1,180 @@
+MariaDB [te31104_db]> CREATE TABLE Stud_Marks(
+    -> roll INT PRIMARY KEY,
+    -> name VARCHAR(100),
+    -> total_marks INT
+    -> );
+Query OK, 0 rows affected (0.170 sec)
+
+MariaDB [te31104_db]> CREATE TABLE Result(
+    -> roll INT,
+    -> name VARCHAR(100),
+    -> class VARCHAR(45),
+    -> FOREIGN KEY(roll) REFERENCES Stud_Marks(roll) ON DELETE CASCADE ON UPDATE CASCADE
+    -> );
+Query OK, 0 rows affected (0.320 sec)
+
+MariaDB [te31104_db]> INSERT INTO Stud_Marks VALUES
+    -> (1,'Vidhi',845),(2,'Abhishek',1284),(5,'Rohan',999),(4,'Sakshi',975),(3,'Yash',837);
+Query OK, 5 rows affected (0.037 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+MariaDB [te31104_db]> SELECT * FROM Stud_Marks;
++------+----------+-------------+
+| roll | name     | total_marks |
++------+----------+-------------+
+|    1 | Vidhi    |         845 |
+|    2 | Abhishek |        1284 |
+|    3 | Yash     |         837 |
+|    4 | Sakshi   |         975 |
+|    5 | Rohan    |         999 |
++------+----------+-------------+
+5 rows in set (0.001 sec)
+
+MariaDB [te31104_db]> delimiter $
+MariaDB [te31104_db]> CREATE PROCEDURE PGrade(IN rollno INT,IN marks INT)
+    -> BEGIN
+    -> DECLARE student VARCHAR(100);
+    -> DECLARE EXIT HANDLER FOR SQLEXCEPTION SELECT 'ENTRY NOT FOUND' AS EXCEPTION;
+    -> IF NOT EXISTS(SELECT * FROM Stud_Marks WHERE roll=rollno AND total_marks=marks) THEN
+    -> SIGNAL SQLSTATE '45000';
+    -> END IF;
+    -> SELECT name INTO student FROM Stud_Marks WHERE roll=rollno AND total_marks=marks;
+    -> IF (marks>=990 AND marks<=1500) THEN
+    -> INSERT INTO Result VALUES(rollno,student,'Distinction');
+    -> ELSEIF (marks>=900 AND marks<=989) THEN
+    -> INSERT INTO Result VALUES(rollno,student,'First Class');
+    -> ELSEIF (marks>=825 AND marks<=899) THEN
+    -> INSERT INTO Result VALUES(rollno,student,'Higher Second Class');
+    -> ELSE
+    -> INSERT INTO Result VALUES(rollno,student,NULL);
+    -> END IF;
+    -> SELECT * FROM Result;
+    -> END $
+Query OK, 0 rows affected (0.075 sec)
+
+MariaDB [te31104_db]> CALL PGrade(1,845);
++------+-------+---------------------+
+| roll | name  | class               |
++------+-------+---------------------+
+|    1 | Vidhi | Higher Second Class |
++------+-------+---------------------+
+1 row in set (0.027 sec)
+
+Query OK, 2 rows affected (0.027 sec)
+
+MariaDB [te31104_db]> CALL PGrade(2,1284);
++------+----------+---------------------+
+| roll | name     | class               |
++------+----------+---------------------+
+|    1 | Vidhi    | Higher Second Class |
+|    2 | Abhishek | Distinction         |
++------+----------+---------------------+
+2 rows in set (0.092 sec)
+
+Query OK, 2 rows affected (0.092 sec)
+
+MariaDB [te31104_db]> CALL PGrade(1,837);
++-----------------+
+| EXCEPTION       |
++-----------------+
+| ENTRY NOT FOUND |
++-----------------+
+1 row in set (0.001 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+MariaDB [te31104_db]> CALL PGrade(3,837);
++------+----------+---------------------+
+| roll | name     | class               |
++------+----------+---------------------+
+|    1 | Vidhi    | Higher Second Class |
+|    2 | Abhishek | Distinction         |
+|    3 | Yash     | Higher Second Class |
++------+----------+---------------------+
+3 rows in set (0.032 sec)
+
+Query OK, 2 rows affected (0.032 sec)
+
+MariaDB [te31104_db]> CALL PGrade(4,975);
++------+----------+---------------------+
+| roll | name     | class               |
++------+----------+---------------------+
+|    1 | Vidhi    | Higher Second Class |
+|    2 | Abhishek | Distinction         |
+|    3 | Yash     | Higher Second Class |
+|    4 | Sakshi   | First Class         |
++------+----------+---------------------+
+4 rows in set (0.076 sec)
+
+Query OK, 2 rows affected (0.077 sec)
+
+MariaDB [te31104_db]> CALL PGrade(5,999);
++------+----------+---------------------+
+| roll | name     | class               |
++------+----------+---------------------+
+|    1 | Vidhi    | Higher Second Class |
+|    2 | Abhishek | Distinction         |
+|    3 | Yash     | Higher Second Class |
+|    4 | Sakshi   | First Class         |
+|    5 | Rohan    | Distinction         |
++------+----------+---------------------+
+5 rows in set (0.033 sec)
+
+
+
+MariaDB [te31104_db]> CREATE TABLE S_Marks(
+    -> roll INT PRIMARY KEY,
+    -> name VARCHAR(100),
+    -> total_marks INT
+    -> );
+Query OK, 0 rows affected (0.171 sec)
+
+MariaDB [te31104_db]> INSERT INTO S_Marks VALUES
+    -> (1,'Vidhi',845),(2,'Abhishek',1284),(5,'Rohan',999),(4,'Sakshi',975),(3,'Yash',837);
+Query OK, 5 rows affected (0.037 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+MariaDB [te31104_db]> SELECT * FROM S_Marks;
++------+----------+-------------+
+| roll | name     | total_marks |
++------+----------+-------------+
+|    1 | Vidhi    |         845 |
+|    2 | Abhishek |        1284 |
+|    3 | Yash     |         837 |
+|    4 | Sakshi   |         975 |
+|    5 | Rohan    |         999 |
++------+----------+-------------+
+5 rows in set (0.001 sec)
+
+MariaDB [te31104_db]> delimiter $
+MariaDB [te31104_db]> CREATE FUNCTION F_Class(marks INT)
+    -> RETURNS VARCHAR(20)
+    -> BEGIN
+    -> DECLARE class VARCHAR(20);
+    -> IF (marks>=990 AND marks<=1500) THEN
+    -> SET class = 'Distinction';
+    -> ELSEIF (marks>=900 AND marks<=989) THEN
+    -> SET class = 'First Class';
+    -> ELSEIF (marks>=825 AND marks<=899) THEN
+    -> SET class = 'Higher Second Class';
+    -> ELSE
+    -> SET class = NULL;
+    -> END IF;
+    -> RETURN class;
+    -> END $
+Query OK, 0 rows affected (0.042 sec)
+
+MariaDB [te31104_db]> SELECT roll,name,F_Class(total_marks) 
+    -> AS grade
+    -> FROM S_Marks;
+    -> $
++------+----------+---------------------+
+| roll | name     | grade               |
++------+----------+---------------------+
+|    1 | Vidhi    | Higher Second Class |
+|    2 | Abhishek | Distinction         |
+|    3 | Yash     | Higher Second Class |
+|    4 | Sakshi   | First Class         |
+|    5 | Rohan    | Distinction         |
++------+----------+---------------------+
+5 rows in set (0.002 sec)

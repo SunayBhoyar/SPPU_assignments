@@ -1,0 +1,86 @@
+MariaDB [31104_db]> CREATE TABLE Borrower(
+    -> Roll_no INT PRIMARY KEY,
+    -> Name VARCHAR(100),
+    -> DateOfIssue DATE,
+    -> NameOfBook VARCHAR(100),
+    -> Status VARCHAR(100)
+    -> );
+Query OK, 0 rows affected (0.172 sec)
+
+MariaDB [31104_db]> CREATE TABLE Fine( 
+    -> Roll_no INT PRIMARY KEY,
+    -> Date DATE,
+    -> Amt INT
+    -> );
+Query OK, 0 rows affected (0.188 sec)
+
+MariaDB [31104_db]> INSERT INTO Borrower VALUES
+    -> (1,'Vidhi','2023-07-15','Sherlock Holmes','I'),(2,'Abhishek','2023-08-07','Harry Potter','I'),(3,'Rohan','2023-02-05','The Lord of the Rings','I'),(4,'Yash','2023-05-16','Percy Jackson','I'),(5,'Sakshi','2023-01-29','A Game of Thrones','I');
+Query OK, 5 rows affected (0.033 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+MariaDB [31104_db]> delimiter $
+MariaDB [31104_db]> CREATE PROCEDURE CFine(Roll INT,Name VARCHAR(100))
+    -> BEGIN
+    -> DECLARE ldate DATE;
+    -> DECLARE fine INT;
+    -> DECLARE day INT;
+    -> SELECT DateOfIssue INTO ldate FROM Borrower WHERE Roll_no=Roll AND NameOfBook=Name;
+    -> SET day=DATEDIFF(CURDATE(),ldate);
+    -> IF (day>=15 AND day<=30) THEN
+    -> SET fine=day*5;
+    -> ELSEIF (day>30) THEN
+    -> SET fine=day*50;
+    -> END IF;
+    -> UPDATE Borrower
+    -> SET Status='R'
+    -> WHERE Roll_no=Roll AND NameOfBook=Name;
+    -> IF (fine IS NOT NULL) THEN
+    -> INSERT INTO Fine VALUE(Roll,CURDATE(),fine);
+    -> END IF;
+    -> END $;
+Query OK, 0 rows affected (0.049 sec)
+
+MariaDB [31104_db]> CALL CFine(1,'Sherlock Holmes')$;
+    -> $
+Query OK, 3 rows affected (0.070 sec)
+
+MariaDB [31104_db]> CALL CFine(2,'Harry Potter');
+    -> $
+Query OK, 1 row affected (0.001 sec)
+
+MariaDB [31104_db]> CALL CFine(3,'The Lord of the Rings');
+    -> $
+Query OK, 3 rows affected (0.068 sec)
+
+MariaDB [31104_db]> CALL CFine(4,'Percy Jackson');
+    -> $
+Query OK, 2 rows affected (0.041 sec)
+
+MariaDB [31104_db]> CALL CFine(5,'A Game of Thrones');
+    -> $
+Query OK, 3 rows affected (0.071 sec)
+
+MariaDB [31104_db]> SELECT * FROM Fine;
+    -> $
++---------+------------+------+
+| Roll_no | Date       | Amt  |
++---------+------------+------+
+|       1 | 2023-08-10 |  130 |
+|       3 | 2023-08-10 | 9300 |
+|       5 | 2023-08-10 | 9650 |
++---------+------------+------+
+3 rows in set (0.001 sec)
+
+MariaDB [31104_db]> SELECT * FROM Borrower;
+    -> $
++---------+----------+-------------+-----------------------+--------+
+| Roll_no | Name     | DateOfIssue | NameOfBook            | Status |
++---------+----------+-------------+-----------------------+--------+
+|       1 | Vidhi    | 2023-07-15  | Sherlock Holmes       | R      |
+|       2 | Abhishek | 2023-08-07  | Harry Potter          | R      |
+|       3 | Rohan    | 2023-02-05  | The Lord of the Rings | R      |
+|       4 | Yash     | 2023-08-01  | Percy Jackson         | R      |
+|       5 | Sakshi   | 2023-01-29  | A Game of Thrones     | R      |
++---------+----------+-------------+-----------------------+--------+
+5 rows in set (0.001 sec)

@@ -1,0 +1,139 @@
+MariaDB [te31104_db]> CREATE TABLE Library(
+    -> rollno INT PRIMARY KEY,
+    -> name VARCHAR(100),
+    -> bookname VARCHAR(100),
+    -> dateofissue DATE,
+    -> price INT);
+Query OK, 0 rows affected (0.212 sec)
+
+MariaDB [te31104_db]> CREATE TABLE Library_Audit(
+    -> rollno INT,
+    -> name VARCHAR(100),
+    -> bookname VARCHAR(100),
+    -> dateofissue DATE,
+    -> price INT);
+Query OK, 0 rows affected (0.189 sec)
+
+MariaDB [te31104_db]> INSERT INTO Library VALUES
+    -> (1,'Vidhi','Sherlock Holmes','2023-04-16',179),(2,'Abhishek','Harry Potter','2023-08-21',218),(3,'Rohan','The Lord of the Rings','2023-02-05',259),(4,'Yash','Percy Jackson','2023-06-25',256),(5,'Sakshi','A Game of Thrones','2023-07-19',197);
+Query OK, 5 rows affected (0.031 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+MariaDB [te31104_db]> delimiter $
+MariaDB [te31104_db]> CREATE TRIGGER l_insert
+    -> AFTER INSERT ON Library
+    -> FOR EACH ROW 
+    -> BEGIN
+    -> INSERT INTO Library_Audit
+    -> VALUES(NEW.rollno, NEW.name, NEW.bookname, NEW.dateofissue, NEW.price);
+    -> END $
+Query OK, 0 rows affected (0.149 sec)
+
+MariaDB [te31104_db]> delimiter $
+MariaDB [te31104_db]> CREATE TRIGGER l_update
+    -> AFTER UPDATE ON Library 
+    -> FOR EACH ROW 
+    -> BEGIN 
+    -> INSERT INTO Library_Audit 
+    -> VALUES(OLD.rollno, OLD.name, OLD.bookname, OLD.dateofissue, OLD.price);
+    -> END $
+Query OK, 0 rows affected (0.057 sec)
+
+MariaDB [te31104_db]> delimiter $
+MariaDB [te31104_db]> CREATE TRIGGER l_delete
+    -> BEFORE DELETE ON Library 
+    -> FOR EACH ROW 
+    -> BEGIN 
+    -> INSERT INTO Library_Audit
+    -> VALUES(OLD.rollno, OLD.name, OLD.bookname, OLD.dateofissue, OLD.price);
+    -> END $
+Query OK, 0 rows affected (0.060 sec)
+
+MariaDB [te31104_db]> delimiter ;
+MariaDB [te31104_db]> SELECT * FROM Library;
++--------+----------+-----------------------+-------------+-------+
+| rollno | name     | bookname              | dateofissue | price |
++--------+----------+-----------------------+-------------+-------+
+|      1 | Vidhi    | Sherlock Holmes       | 2023-04-16  |   179 |
+|      2 | Abhishek | Harry Potter          | 2023-08-21  |   218 |
+|      3 | Rohan    | The Lord of the Rings | 2023-02-05  |   259 |
+|      4 | Yash     | Percy Jackson         | 2023-06-25  |   256 |
+|      5 | Sakshi   | A Game of Thrones     | 2023-07-19  |   197 |
++--------+----------+-----------------------+-------------+-------+
+5 rows in set (0.002 sec)
+
+MariaDB [te31104_db]> UPDATE Library
+    -> SET name='Aditi'
+    -> WHERE name='Yash';
+Query OK, 1 row affected (0.030 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [te31104_db]> SELECT * FROM Library_Audit;
++--------+------+---------------+-------------+-------+
+| rollno | name | bookname      | dateofissue | price |
++--------+------+---------------+-------------+-------+
+|      4 | Yash | Percy Jackson | 2023-06-25  |   256 |
++--------+------+---------------+-------------+-------+
+1 row in set (0.001 sec)
+
+MariaDB [te31104_db]> SELECT * FROM Library;
++--------+----------+-----------------------+-------------+-------+
+| rollno | name     | bookname              | dateofissue | price |
++--------+----------+-----------------------+-------------+-------+
+|      1 | Vidhi    | Sherlock Holmes       | 2023-04-16  |   179 |
+|      2 | Abhishek | Harry Potter          | 2023-08-21  |   218 |
+|      3 | Rohan    | The Lord of the Rings | 2023-02-05  |   259 |
+|      4 | Aditi    | Percy Jackson         | 2023-06-25  |   256 |
+|      5 | Sakshi   | A Game of Thrones     | 2023-07-19  |   197 |
++--------+----------+-----------------------+-------------+-------+
+5 rows in set (0.001 sec)
+
+MariaDB [te31104_db]> DELETE FROM Library
+    -> WHERE name='Aditi';
+Query OK, 1 row affected (0.030 sec)
+
+MariaDB [te31104_db]> SELECT * FROM Library_Audit;
++--------+-------+---------------+-------------+-------+
+| rollno | name  | bookname      | dateofissue | price |
++--------+-------+---------------+-------------+-------+
+|      4 | Yash  | Percy Jackson | 2023-06-25  |   256 |
+|      4 | Aditi | Percy Jackson | 2023-06-25  |   256 |
++--------+-------+---------------+-------------+-------+
+2 rows in set (0.001 sec)
+
+MariaDB [te31104_db]> SELECT * FROM Library;
++--------+----------+-----------------------+-------------+-------+
+| rollno | name     | bookname              | dateofissue | price |
++--------+----------+-----------------------+-------------+-------+
+|      1 | Vidhi    | Sherlock Holmes       | 2023-04-16  |   179 |
+|      2 | Abhishek | Harry Potter          | 2023-08-21  |   218 |
+|      3 | Rohan    | The Lord of the Rings | 2023-02-05  |   259 |
+|      5 | Sakshi   | A Game of Thrones     | 2023-07-19  |   197 |
++--------+----------+-----------------------+-------------+-------+
+4 rows in set (0.001 sec)
+
+MariaDB [te31104_db]> INSERT INTO Library VALUES
+    -> (4,'Ameya','The Hunger Games','2023-11-17',272);
+Query OK, 1 row affected (0.037 sec)
+
+MariaDB [te31104_db]> SELECT * FROM Library_Audit;
++--------+-------+------------------+-------------+-------+
+| rollno | name  | bookname         | dateofissue | price |
++--------+-------+------------------+-------------+-------+
+|      4 | Yash  | Percy Jackson    | 2023-06-25  |   256 |
+|      4 | Aditi | Percy Jackson    | 2023-06-25  |   256 |
+|      4 | Ameya | The Hunger Games | 2023-11-17  |   272 |
++--------+-------+------------------+-------------+-------+
+3 rows in set (0.001 sec)
+
+MariaDB [te31104_db]> SELECT * FROM Library;
++--------+----------+-----------------------+-------------+-------+
+| rollno | name     | bookname              | dateofissue | price |
++--------+----------+-----------------------+-------------+-------+
+|      1 | Vidhi    | Sherlock Holmes       | 2023-04-16  |   179 |
+|      2 | Abhishek | Harry Potter          | 2023-08-21  |   218 |
+|      3 | Rohan    | The Lord of the Rings | 2023-02-05  |   259 |
+|      4 | Ameya    | The Hunger Games      | 2023-11-17  |   272 |
+|      5 | Sakshi   | A Game of Thrones     | 2023-07-19  |   197 |
++--------+----------+-----------------------+-------------+-------+
+5 rows in set (0.001 sec)

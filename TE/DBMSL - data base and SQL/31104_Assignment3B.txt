@@ -1,0 +1,240 @@
+MariaDB [te31104_db]> SELECT * 
+    -> FROM Student
+    -> NATURAL JOIN PlacementDrive;
++----------+------+------+-----------+------+----------+--------------+---------+-----------+
+| Drive_id | s_id | T_id | s_name    | CGPA | s_branch | company_name | package | location  |
++----------+------+------+-----------+------+----------+--------------+---------+-----------+
+|    16042 |    1 |  179 | Vidhi     |  8.6 | Comp     | Dell         |   59000 | Pune      |
+|    24822 |    2 |  248 | Abhishek  |  9.6 | Comp     | Apple        |   96000 | Bangalore |
+|    47858 |    3 |  261 | Harsh     |  8.5 | EnTC     | Barclays     |   25000 | Mumbai    |
+|    36557 |    4 |  304 | Riya      |  6.7 | IT       | Infosys      |   40000 | Delhi     |
+|    75936 |    5 |  417 | Yash      |  6.5 | Comp     | PhonePe      |   36000 | Chennai   |
+|    54747 |    6 |  531 | Sunand    |  8.3 | IT       | Samsung      |   45000 | Delhi     |
+|    43847 |    7 |  568 | Siddhi    |  9.4 | EnTC     | Facebook     |   75000 | Hyderabad |
+|    53746 |    8 |  747 | Vaishnavi |  6.9 | IT       | Google       |   89000 | Bangalore |
+|    54848 |    9 |  768 | Satyajit  |  9.2 | Comp     | Microsoft    |   92000 | Kolkata   |
+|    95736 |   10 |  975 | Disha     |  8.9 | Comp     | Wipro        |   29000 | Pune      |
++----------+------+------+-----------+------+----------+--------------+---------+-----------+
+10 rows in set (0.001 sec)
+
+MariaDB [te31104_db]> SELECT Student.s_id,Student.s_name,Student.CGPA,Student.s_branch,PlacementDrive.company_name
+    -> FROM Student
+    -> JOIN PlacementDrive ON Student.Drive_id = PlacementDrive.Drive_id
+    -> WHERE Student.Drive_id IN (
+    -> SELECT Drive_id
+    -> FROM PlacementDrive
+    -> GROUP BY Drive_id
+    -> HAVING COUNT(DISTINCT company_name)>1)
+    -> ORDER BY Student.Drive_id, Student.s_id;
+Empty set (0.001 sec)
+
+MariaDB [te31104_db]> SELECT s_name,s_branch
+    -> FROM Student
+    -> JOIN PlacementDrive ON Student.Drive_id=PlacementDrive.Drive_id
+    -> WHERE package=96000;
++----------+----------+
+| s_name   | s_branch |
++----------+----------+
+| Abhishek | Comp     |
++----------+----------+
+1 row in set (0.001 sec)
+
+MariaDB [te31104_db]> SELECT Student.s_name,Training.company_name FROM Student JOIN Training ON Student.T_id=Training.T_id WHERE Training.T_Fee>9000;
++----------+--------------+
+| s_name   | company_name |
++----------+--------------+
+| Vidhi    | Siemens      |
+| Abhishek | Microsoft    |
+| Harsh    | Infosys      |
+| Satyajit | Avaya        |
++----------+--------------+
+4 rows in set (0.001 sec)
+
+MariaDB [te31104_db]> SELECT Training.T_id,Training.company_name,Training.T_Fee,Training.T_date 
+    -> FROM Training
+    -> JOIN Student on Student.T_id=Training.T_id
+    -> WHERE Student.s_name='Abhishek' AND T_date='2020-08-24';
++------+--------------+-------+------------+
+| T_id | company_name | T_Fee | T_date     |
++------+--------------+-------+------------+
+|  248 | Microsoft    |  9600 | 2020-08-24 |
++------+--------------+-------+------------+
+1 row in set (0.001 sec)
+
+MariaDB [te31104_db]> SELECT COUNT(company_name) AS num_companies
+    -> FROM Training
+    -> WHERE T_date<'2015-01-01';
++---------------+
+| num_companies |
++---------------+
+|             3 |
++---------------+
+1 row in set (0.001 sec)
+
+MariaDB [te31104_db]> SELECT Student.s_name
+    -> FROM Student
+    -> JOIN PlacementDrive ON Student.Drive_id=PlacementDrive.Drive_id
+    -> WHERE PlacementDrive.company_name='Microsoft' AND PlacementDrive.location='Kolkata';
++----------+
+| s_name   |
++----------+
+| Satyajit |
++----------+
+1 row in set (0.005 sec)
+
+MariaDB [te31104_db]> SELECT Student.s_name
+    -> FROM Student
+    -> JOIN Training ON Student.T_id=Training.T_id
+    -> WHERE Training.company_name='Microsoft' AND Training.T_date='2020-08-24';
++----------+
+| s_name   |
++----------+
+| Abhishek |
++----------+
+1 row in set (0.003 sec)
+
+MariaDB [te31104_db]> CREATE VIEW s_t AS
+    -> SELECT *
+    -> FROM Student
+    -> NATURAL JOIN Training;
+Query OK, 0 rows affected (0.011 sec)
+
+MariaDB [te31104_db]> SELECT * FROM s_t;
++------+------+----------+-----------+------+----------+---------------+-------+------------+
+| T_id | s_id | Drive_id | s_name    | CGPA | s_branch | company_name  | T_Fee | T_date     |
++------+------+----------+-----------+------+----------+---------------+-------+------------+
+|  179 |    1 |    16042 | Vidhi     |  8.6 | Comp     | Siemens       |  9800 | 2018-03-05 |
+|  248 |    2 |    24822 | Abhishek  |  9.6 | Comp     | Microsoft     |  9600 | 2020-08-24 |
+|  261 |    3 |    47858 | Harsh     |  8.5 | EnTC     | Infosys       | 10000 | 2016-12-24 |
+|  304 |    4 |    36557 | Riya      |  6.7 | IT       | Mastercard    |  7400 | 2023-07-25 |
+|  417 |    5 |    75936 | Yash      |  6.5 | Comp     | Deutsche Bank |  7500 | 2014-07-23 |
+|  531 |    6 |    54747 | Sunand    |  8.3 | IT       | Nvidia        |  7800 | 2021-12-23 |
+|  568 |    7 |    43847 | Siddhi    |  9.4 | EnTC     | Persistent    |  8200 | 2012-12-16 |
+|  747 |    8 |    53746 | Vaishnavi |  6.9 | IT       | Barclays      |  7820 | 2013-03-09 |
+|  768 |    9 |    54848 | Satyajit  |  9.2 | Comp     | Avaya         | 12500 | 2020-02-29 |
+|  975 |   10 |    95736 | Disha     |  8.9 | Comp     | PhonePe       |  3500 | 2023-04-24 |
++------+------+----------+-----------+------+----------+---------------+-------+------------+
+10 rows in set (0.013 sec)
+
+MariaDB [te31104_db]> CREATE VIEW spt AS
+    -> SELECT Student.s_id,Student.s_name,Student.CGPA,PlacementDrive.company_name AS p_comapny_name,PlacementDrive.package,PlacementDrive.location,Training.company_name AS t_company_name,Training.T_Fee,Training.T_date
+    -> FROM Student
+    -> JOIN PlacementDrive ON Student.Drive_id=PlacementDrive.Drive_id
+    -> JOIN Training ON Student.T_id=Training.T_id;
+Query OK, 0 rows affected (0.008 sec)
+
+MariaDB [te31104_db]> SELECT * FROM spt;
++------+-----------+------+----------------+---------+-----------+----------------+-------+------------+
+| s_id | s_name    | CGPA | p_comapny_name | package | location  | t_company_name | T_Fee | T_date     |
++------+-----------+------+----------------+---------+-----------+----------------+-------+------------+
+|    1 | Vidhi     |  8.6 | Dell           |   59000 | Pune      | Siemens        |  9800 | 2018-03-05 |
+|    2 | Abhishek  |  9.6 | Apple          |   96000 | Bangalore | Microsoft      |  9600 | 2020-08-24 |
+|    3 | Harsh     |  8.5 | Barclays       |   25000 | Mumbai    | Infosys        | 10000 | 2016-12-24 |
+|    4 | Riya      |  6.7 | Infosys        |   40000 | Delhi     | Mastercard     |  7400 | 2023-07-25 |
+|    5 | Yash      |  6.5 | PhonePe        |   36000 | Chennai   | Deutsche Bank  |  7500 | 2014-07-23 |
+|    6 | Sunand    |  8.3 | Samsung        |   45000 | Delhi     | Nvidia         |  7800 | 2021-12-23 |
+|    7 | Siddhi    |  9.4 | Facebook       |   75000 | Hyderabad | Persistent     |  8200 | 2012-12-16 |
+|    8 | Vaishnavi |  6.9 | Google         |   89000 | Bangalore | Barclays       |  7820 | 2013-03-09 |
+|    9 | Satyajit  |  9.2 | Microsoft      |   92000 | Kolkata   | Avaya          | 12500 | 2020-02-29 |
+|   10 | Disha     |  8.9 | Wipro          |   29000 | Pune      | PhonePe        |  3500 | 2023-04-24 |
++------+-----------+------+----------------+---------+-----------+----------------+-------+------------+
+10 rows in set (0.010 sec)
+
+MariaDB [te31104_db]> INSERT INTO PlacementDrive VALUES
+    -> (88509,'HP',43000,'Kolkata');
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [te31104_db]> INSERT INTO Training VALUES
+    -> (395,'Logitech',5600,'2023-01-15');
+Query OK, 1 row affected (0.003 sec)
+
+MariaDB [te31104_db]> INSERT INTO Student VALUES
+    -> (11,88509,395,'Sakshi',9.1,'Comp');
+Query OK, 1 row affected (0.004 sec)
+
+MariaDB [te31104_db]> SELECT * FROM spt;
++------+-----------+------+----------------+---------+-----------+----------------+-------+------------+
+| s_id | s_name    | CGPA | p_comapny_name | package | location  | t_company_name | T_Fee | T_date     |
++------+-----------+------+----------------+---------+-----------+----------------+-------+------------+
+|    1 | Vidhi     |  8.6 | Dell           |   59000 | Pune      | Siemens        |  9800 | 2018-03-05 |
+|    2 | Abhishek  |  9.6 | Apple          |   96000 | Bangalore | Microsoft      |  9600 | 2020-08-24 |
+|    3 | Harsh     |  8.5 | Barclays       |   25000 | Mumbai    | Infosys        | 10000 | 2016-12-24 |
+|    4 | Riya      |  6.7 | Infosys        |   40000 | Delhi     | Mastercard     |  7400 | 2023-07-25 |
+|    5 | Yash      |  6.5 | PhonePe        |   36000 | Chennai   | Deutsche Bank  |  7500 | 2014-07-23 |
+|    6 | Sunand    |  8.3 | Samsung        |   45000 | Delhi     | Nvidia         |  7800 | 2021-12-23 |
+|    7 | Siddhi    |  9.4 | Facebook       |   75000 | Hyderabad | Persistent     |  8200 | 2012-12-16 |
+|    8 | Vaishnavi |  6.9 | Google         |   89000 | Bangalore | Barclays       |  7820 | 2013-03-09 |
+|    9 | Satyajit  |  9.2 | Microsoft      |   92000 | Kolkata   | Avaya          | 12500 | 2020-02-29 |
+|   10 | Disha     |  8.9 | Wipro          |   29000 | Pune      | PhonePe        |  3500 | 2023-04-24 |
+|   11 | Sakshi    |  9.1 | HP             |   43000 | Kolkata   | Logitech       |  5600 | 2023-01-15 |
++------+-----------+------+----------------+---------+-----------+----------------+-------+------------+
+11 rows in set (0.001 sec)
+
+MariaDB [31104_db]> UPDATE spt
+    -> SET CGPA=9.5
+    -> WHERE s_id=11;
+Query OK, 1 row affected (0.027 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [31104_db]> SELECT * FROM spt;
++------+-----------+------+----------------+---------+-----------+----------------+-------+------------+
+| s_id | s_name    | CGPA | p_comapny_name | package | location  | t_company_name | T_Fee | T_date     |
++------+-----------+------+----------------+---------+-----------+----------------+-------+------------+
+|    1 | Vidhi     |  8.6 | Dell           |   59000 | Pune      | Siemens        |  9800 | 2018-03-05 |
+|    2 | Abhishek  |  9.6 | Apple          |   96000 | Bangalore | Microsoft      |  9600 | 2020-08-24 |
+|    3 | Harsh     |  8.5 | Barclays       |   25000 | Mumbai    | Infosys        | 10000 | 2016-12-24 |
+|    4 | Riya      |  6.7 | Infosys        |   40000 | Delhi     | Mastercard     |  7400 | 2023-07-25 |
+|    5 | Yash      |  6.5 | PhonePe        |   36000 | Chennai   | Deutsche Bank  |  7500 | 2017-10-31 |
+|    6 | Sunand    |  8.3 | Samsung        |   45000 | Delhi     | Nvidia         |  7800 | 2021-12-23 |
+|    7 | Siddhi    |  9.4 | Facebook       |   75000 | Hyderabad | Persistent     |  8200 | 2019-02-28 |
+|    8 | Vaishnavi |  6.9 | Google         |   89000 | Bangalore | Barclays       |  6800 | 2019-01-01 |
+|    9 | Satyajit  |  9.2 | Microsoft      |   92000 | Kolkata   | Avaya          | 12500 | 2020-02-29 |
+|   10 | Disha     |  8.9 | Wipro          |   29000 | Pune      | PhonePe        |  3500 | 2023-04-24 |
+|   11 | Sakshi    |  9.5 | HP             |   43000 | Kolkata   | Logitech       |  5600 | 2023-01-15 |
++------+-----------+------+----------------+---------+-----------+----------------+-------+------------+
+11 rows in set (0.002 sec)
+
+MariaDB [te31104_db]> DELETE FROM Student
+    -> wHERE s_branch IN('IT','EnTC');
+Query OK, 5 rows affected (0.007 sec)
+
+MariaDB [te31104_db]> SELECT * FROM spt;
++------+----------+------+----------------+---------+-----------+----------------+-------+------------+
+| s_id | s_name   | CGPA | p_comapny_name | package | location  | t_company_name | T_Fee | T_date     |
++------+----------+------+----------------+---------+-----------+----------------+-------+------------+
+|    1 | Vidhi    |  8.6 | Dell           |   59000 | Pune      | Siemens        |  9800 | 2018-03-05 |
+|    2 | Abhishek |  9.6 | Apple          |   96000 | Bangalore | Microsoft      |  9600 | 2020-08-24 |
+|    5 | Yash     |  6.5 | PhonePe        |   36000 | Chennai   | Deutsche Bank  |  7500 | 2014-07-23 |
+|    9 | Satyajit |  9.2 | Microsoft      |   92000 | Kolkata   | Avaya          | 12500 | 2020-02-29 |
+|   10 | Disha    |  8.9 | Wipro          |   29000 | Pune      | PhonePe        |  3500 | 2023-04-24 |
+|   11 | Sakshi   |  9.5 | HP             |   43000 | Kolkata   | Logitech       |  5600 | 2023-01-15 |
++------+----------+------+----------------+---------+-----------+----------------+-------+------------+
+6 rows in set (0.001 sec)
+
+MariaDB [31104_db]> SHOW TABLES;
++--------------------+
+| Tables_in_31104_db |
++--------------------+
+| PlacementDrive     |
+| Student            |
+| Training           |
+| s_t                |
+| spt                |
++--------------------+
+5 rows in set (0.001 sec)
+
+MariaDB [te31104_db]> DROP VIEW s_t;
+Query OK, 0 rows affected (0.009 sec)
+
+MariaDB [te31104_db]> DROP VIEW spt;
+Query OK, 0 rows affected (0.009 sec)
+
+MariaDB [te31104_db]> SHOW TABLES;
++----------------------+
+| Tables_in_te31104_db |
++----------------------+
+| PlacementDrive       |
+| Student              |
+| Training             |
++----------------------+
+3 rows in set (0.001 sec)

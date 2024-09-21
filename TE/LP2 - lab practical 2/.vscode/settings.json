@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "queue": "cpp",
+        "ostream": "cpp",
+        "vector": "cpp",
+        "iosfwd": "cpp",
+        "iostream": "cpp",
+        "algorithm": "cpp",
+        "__node_handle": "cpp",
+        "valarray": "cpp",
+        "__tree": "cpp",
+        "map": "cpp",
+        "format": "cpp"
+    }
+}

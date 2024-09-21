@@ -1,0 +1,90 @@
+MariaDB [te31104_db]> CREATE TABLE Areas(
+    -> radius INT PRIMARY KEY,
+    -> area FLOAT
+    -> );
+Query OK, 0 rows affected (0.234 sec)
+
+MariaDB [te31104_db]> delimiter $
+MariaDB [te31104_db]> CREATE PROCEDURE CArea(IN r1 INT, IN r2 INT)
+    -> BEGIN
+    -> DECLARE not_null INT DEFAULT 0;
+    -> BEGIN
+    -> DECLARE rad INT;
+    -> DECLARE EXIT HANDLER FOR 1048 SET not_null=1;
+    -> SET rad=r1;
+    -> st : LOOP
+    -> IF (rad=0) THEN
+    -> INSERT INTO Areas
+    -> VALUES(NULL,3.14159*rad*rad);
+    -> ELSE
+    -> INSERT INTO Areas
+    -> VALUES(rad,3.14159*rad*rad);
+    -> END IF;
+    -> IF (rad=r2) THEN
+    -> LEAVE st;
+    -> END IF;
+    -> SET rad=rad+1;
+    -> END LOOP st;
+    -> SELECT * FROM Areas;
+    -> END;
+    -> IF (not_null=1) THEN
+    -> SELECT 'Unsuccessful Insert-NULL value' AS ERROR;
+    -> END IF;
+    -> END $;
+Query OK, 0 rows affected (0.025 sec)
+
+MariaDB [te31104_db]> CALL CArea(5,9);
+    -> $
++--------+---------+
+| radius | area    |
++--------+---------+
+|      5 | 78.5397 |
+|      6 | 113.097 |
+|      7 | 153.938 |
+|      8 | 201.062 |
+|      9 | 254.469 |
++--------+---------+
+5 rows in set (0.314 sec)
+
+Query OK, 5 rows affected (0.314 sec)
+
+
+
+
+MariaDB [te31104_db]> CREATE TABLE Area(
+    -> radius INT PRIMARY KEY,
+    -> area FLOAT
+    -> );
+Query OK, 0 rows affected (0.234 sec)
+
+MariaDB [te31104_db]> delimiter $
+MariaDB [te31104_db]> CREATE PROCEDURE CAr()
+    -> BEGIN
+    -> DECLARE i INT;
+    -> SET i=5;
+    -> WHILE i<=9 DO
+    -> INSERT INTO Area VALUES(i,3.14159*i*i);
+    -> SET i=i+1;
+    -> END WHILE;
+    -> END $;
+Query OK, 0 rows affected (0.055 sec)
+
+    -> $
+ERROR 1065 (42000): Query was empty
+MariaDB [te31104_db]> CALL CAr();
+    -> $
+Query OK, 5 rows affected (0.134 sec)
+
+MariaDB [te31104_db]> SELECT * FROM Area;
+    -> $
++--------+---------+
+| radius | area    |
++--------+---------+
+|      5 | 78.5397 |
+|      6 | 113.097 |
+|      7 | 153.938 |
+|      8 | 201.062 |
+|      9 | 254.469 |
++--------+---------+
+5 rows in set (0.001 sec)
+

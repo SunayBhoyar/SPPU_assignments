@@ -1,0 +1,302 @@
+MariaDB [(none)]> USE te31104_db;
+Database changed
+MariaDB [te31104_db]> CREATE TABLE PlacementDrive (
+    -> Drive_id INT PRIMARY KEY,
+    -> company_name VARCHAR(100),
+    -> package INT,
+    -> location VARCHAR(100)
+    -> );
+Query OK, 0 rows affected (0.014 sec)
+
+MariaDB [te31104_db]> CREATE TABLE Training (
+    -> T_id INT PRIMARY KEY,
+    -> company_name VARCHAR(100),
+    -> T_Fee INT,
+    -> T_date DATE
+    -> );
+Query OK, 0 rows affected (0.014 sec)
+
+MariaDB [te31104_db]> CREATE TABLE Student (
+    -> s_id INT PRIMARY KEY,
+    -> Drive_id INT,
+    -> T_id INT,
+    -> s_name VARCHAR(50),
+    -> CGPA FLOAT,
+    -> s_branch VARCHAR(50),
+    -> FOREIGN KEY (Drive_id) REFERENCES PlacementDrive(Drive_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    -> FOREIGN KEY (T_id) REFERENCES Training(T_id) ON DELETE CASCADE ON UPDATE CASCADE
+    -> );
+Query OK, 0 rows affected (0.015 sec)
+
+MariaDB [te31104_db]> INSERT INTO PlacementDrive VALUES
+    -> (16042,'Dell',59000,'Pune'),(24822,'Apple',96000,'Bangalore'),(36557,'Infosys',40000,'Delhi'),(43847,'Facebook',75000,'Hyderabad'),(47858,'Barclays',25000,'Mumbai'),(53746,'Google',89000,'Bangalore'),(54747,'Samsung',45000,'Delhi'),(54848,'Microsoft',92000,'Kolkata'),(75936,'PhonePe',36000,'Chennai'),(95736,'Wipro',29000,'Pune');
+Query OK, 10 rows affected (0.010 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+MariaDB [te31104_db]> SELECT * FROM PlacementDrive;
++----------+--------------+---------+-----------+
+| Drive_id | company_name | package | location  |
++----------+--------------+---------+-----------+
+|    16042 | Dell         |   59000 | Pune      |
+|    24822 | Apple        |   96000 | Bangalore |
+|    36557 | Infosys      |   40000 | Delhi     |
+|    43847 | Facebook     |   75000 | Hyderabad |
+|    47858 | Barclays     |   25000 | Mumbai    |
+|    53746 | Google       |   89000 | Bangalore |
+|    54747 | Samsung      |   45000 | Delhi     |
+|    54848 | Microsoft    |   92000 | Kolkata   |
+|    75936 | PhonePe      |   36000 | Chennai   |
+|    95736 | Wipro        |   29000 | Pune      |
++----------+--------------+---------+-----------+
+10 rows in set (0.001 sec)
+
+MariaDB [te31104_db]> INSERT INTO Training VALUES
+    -> (179, 'Siemens', 9800, '2018-03-05'),(248, 'Microsoft', 9600, '2020-08-24'),(261, 'Infosys', 10000, '2016-12-24'),(304, 'Mastercard', 7400, '2023-07-25'),(417, 'Deutsche Bank', 7500, '2017-10-31'),(531, 'Nvidia', 7800, '2021-12-23'),(568, 'Persistent', 8200, '2019-02-28'),(747, 'Barclays', 6800, '2019-01-01'),(768, 'Avaya', 12500, '2020-02-29'),(975, 'PhonePe', 3500, '2023-04-24');
+Query OK, 10 rows affected (0.010 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+MariaDB [te31104_db]> SELECT * FROM Training;
++------+---------------+-------+------------+
+| T_id | company_name  | T_Fee | T_date     |
++------+---------------+-------+------------+
+|  179 | Siemens       |  9800 | 2018-03-05 |
+|  248 | Microsoft     |  9600 | 2020-08-24 |
+|  261 | Infosys       | 10000 | 2016-12-24 |
+|  304 | Mastercard    |  7400 | 2023-07-25 |
+|  417 | Deutsche Bank |  7500 | 2017-10-31 |
+|  531 | Nvidia        |  7800 | 2021-12-23 |
+|  568 | Persistent    |  8200 | 2019-02-28 |
+|  747 | Barclays      |  6800 | 2019-01-01 |
+|  768 | Avaya         | 12500 | 2020-02-29 |
+|  975 | PhonePe       |  3500 | 2023-04-24 |
++------+---------------+-------+------------+
+10 rows in set (0.001 sec)
+
+MariaDB [te31104_db]> INSERT INTO Student VALUES
+    -> (1,16042,179,'Vidhi',8.6,'Comp'),(2,24822,248,'Abhishek',9.6,'Comp'),(3,47858,261,'Harsh',8.5,'EnTC'),(4,36557,304,'Riya',6.7,'IT'),(5,75936,417,'Yash',6.5,'Comp'),(6,54747,531,'Sunand',8.3,'IT'),(7,43847,568,'Siddhi',9.4,'EnTC'),(8,53746,747,'Vaishnavi',6.9,'IT'),(9,54848,768,'Satyajit',9.2,'Comp'),(10,95736,975,'Disha',8.9,'Comp');
+Query OK, 10 rows affected (0.009 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+MariaDB [te31104_db]> SELECT * FROM Student;
++------+----------+------+-----------+------+----------+
+| s_id | Drive_id | T_id | s_name    | CGPA | s_branch |
++------+----------+------+-----------+------+----------+
+|    1 |    16042 |  179 | Vidhi     |  8.6 | Comp     |
+|    2 |    24822 |  248 | Abhishek  |  9.6 | Comp     |
+|    3 |    47858 |  261 | Harsh     |  8.5 | EnTC     |
+|    4 |    36557 |  304 | Riya      |  6.7 | IT       |
+|    5 |    75936 |  417 | Yash      |  6.5 | Comp     |
+|    6 |    54747 |  531 | Sunand    |  8.3 | IT       |
+|    7 |    43847 |  568 | Siddhi    |  9.4 | EnTC     |
+|    8 |    53746 |  747 | Vaishnavi |  6.9 | IT       |
+|    9 |    54848 |  768 | Satyajit  |  9.2 | Comp     |
+|   10 |    95736 |  975 | Disha     |  8.9 | Comp     |
++------+----------+------+-----------+------+----------+
+10 rows in set (0.001 sec)
+
+MariaDB [te31104_db]> SELECT s_id,Drive_id,T_id,s_name,CGPA,s_branch
+    -> FROM Student
+    -> WHERE s_branch IN('Comp','IT')
+    -> AND s_name LIKE 'A%' OR s_name LIKE 'D%';
++------+----------+------+----------+------+----------+
+| s_id | Drive_id | T_id | s_name   | CGPA | s_branch |
++------+----------+------+----------+------+----------+
+|    2 |    24822 |  248 | Abhishek |  9.6 | Comp     |
+|   10 |    95736 |  975 | Disha    |  8.9 | Comp     |
++------+----------+------+----------+------+----------+
+2 rows in set (0.001 sec)
+
+MariaDB [te31104_db]> SELECT DISTINCT company_name
+    -> FROM PlacementDrive;
++--------------+
+| company_name |
++--------------+
+| Dell         |
+| Apple        |
+| Infosys      |
+| Facebook     |
+| Barclays     |
+| Google       |
+| Samsung      |
+| Microsoft    |
+| PhonePe      |
+| Wipro        |
++--------------+
+10 rows in set (0.003 sec)
+
+MariaDB [te31104_db]> UPDATE Training
+    -> SET T_Fee=T_Fee*1.15
+    -> WHERE T_date='2019-01-01';
+Query OK, 1 row affected (0.004 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [te31104_db]> SELECT * FROM Training;
++------+---------------+-------+------------+
+| T_id | company_name  | T_Fee | T_date     |
++------+---------------+-------+------------+
+|  179 | Siemens       |  9800 | 2018-03-05 |
+|  248 | Microsoft     |  9600 | 2020-08-24 |
+|  261 | Infosys       | 10000 | 2016-12-24 |
+|  304 | Mastercard    |  7400 | 2023-07-25 |
+|  417 | Deutsche Bank |  7500 | 2017-10-31 |
+|  531 | Nvidia        |  7800 | 2021-12-23 |
+|  568 | Persistent    |  8200 | 2019-02-28 |
+|  747 | Barclays      |  7820 | 2019-01-01 |
+|  768 | Avaya         | 12500 | 2020-02-29 |
+|  975 | PhonePe       |  3500 | 2023-04-24 |
++------+---------------+-------+------------+
+10 rows in set (0.001 sec)
+
+MariaDB [te31104_db]> DELETE FROM Student
+    -> WHERE CGPA<7;
+Query OK, 3 rows affected (0.003 sec)
+
+MariaDB [te31104_db]> SELECT * FROM Student;
++------+----------+------+----------+------+----------+
+| s_id | Drive_id | T_id | s_name   | CGPA | s_branch |
++------+----------+------+----------+------+----------+
+|    1 |    16042 |  179 | Vidhi    |  8.6 | Comp     |
+|    2 |    24822 |  248 | Abhishek |  9.6 | Comp     |
+|    3 |    47858 |  261 | Harsh    |  8.5 | EnTC     |
+|    6 |    54747 |  531 | Sunand   |  8.3 | IT       |
+|    7 |    43847 |  568 | Siddhi   |  9.4 | EnTC     |
+|    9 |    54848 |  768 | Satyajit |  9.2 | Comp     |
+|   10 |    95736 |  975 | Disha    |  8.9 | Comp     |
++------+----------+------+----------+------+----------+
+7 rows in set (0.001 sec)
+
+MariaDB [te31104_db]> SELECT company_name
+    -> FROM PlacementDrive
+    -> WHERE location IN('Pune','Mumbai');
++--------------+
+| company_name |
++--------------+
+| Dell         |
+| Barclays     |
+| Wipro        |
++--------------+
+3 rows in set (0.000 sec)
+
+INSERT INTO Student VALUES
+    -> (4,36557,304,'Riya',6.7,'IT'),(5,75936,417,'Yash',6.5,'Comp'),(8,53746,747,'Vaishnavi',6.9,'IT');
+Query OK, 3 rows affected (0.004 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+MariaDB [te31104_db]> SELECT * FROM Student;
++------+----------+------+-----------+------+----------+
+| s_id | Drive_id | T_id | s_name    | CGPA | s_branch |
++------+----------+------+-----------+------+----------+
+|    1 |    16042 |  179 | Vidhi     |  8.6 | Comp     |
+|    2 |    24822 |  248 | Abhishek  |  9.6 | Comp     |
+|    3 |    47858 |  261 | Harsh     |  8.5 | EnTC     |
+|    4 |    36557 |  304 | Riya      |  6.7 | IT       |
+|    5 |    75936 |  417 | Yash      |  6.5 | Comp     |
+|    6 |    54747 |  531 | Sunand    |  8.3 | IT       |
+|    7 |    43847 |  568 | Siddhi    |  9.4 | EnTC     |
+|    8 |    53746 |  747 | Vaishnavi |  6.9 | IT       |
+|    9 |    54848 |  768 | Satyajit  |  9.2 | Comp     |
+|   10 |    95736 |  975 | Disha     |  8.9 | Comp     |
++------+----------+------+-----------+------+----------+
+10 rows in set (0.000 sec)
+
+MariaDB [te31104_db]> SELECT s_name
+    -> FROM Student
+    -> WHERE T_id IN (
+    ->     SELECT T_id
+    ->     FROM Training
+    ->     WHERE T_date = '2019-01-01' OR T_date = '2021-01-01'
+    -> );
++-----------+
+| s_name    |
++-----------+
+| Vaishnavi |
++-----------+
+1 row in set (0.001 sec)
+
+MariaDB [te31104_db]> SELECT s_name
+    -> FROM Student
+    -> WHERE CGPA = (
+    -> SELECT MAX(CGPA)
+    -> FROM Student
+    -> );
++----------+
+| s_name   |
++----------+
+| Abhishek |
++----------+
+1 row in set (0.001 sec)
+
+MariaDB [te31104_db]> SELECT s_name
+    -> FROM Student
+    -> WHERE CGPA>7 AND CGPA<9;
++--------+
+| s_name |
++--------+
+| Vidhi  |
+| Harsh  |
+| Sunand |
+| Disha  |
++--------+
+4 rows in set (0.000 sec)
+
+MariaDB [te31104_db]> SELECT s_name,T_id
+    -> FROM Student
+    -> ORDER BY (
+    -> SELECT T_Fee
+    -> FROM Training
+    -> WHERE Training.T_id=Student.T_id
+    -> )DESC;
++-----------+------+
+| s_name    | T_id |
++-----------+------+
+| Satyajit  |  768 |
+| Harsh     |  261 |
+| Vidhi     |  179 |
+| Abhishek  |  248 |
+| Siddhi    |  568 |
+| Vaishnavi |  747 |
+| Sunand    |  531 |
+| Yash      |  417 |
+| Riya      |  304 |
+| Disha     |  975 |
++-----------+------+
+10 rows in set (0.006 sec)
+
+MariaDB [te31104_db]> SELECT company_name, s_name, location, package
+    -> FROM PlacementDrive, Student
+    -> WHERE PlacementDrive.Drive_id = Student.Drive_id
+    -> AND (package = 30000 OR package = 40000 OR package = 50000);
++--------------+--------+----------+---------+
+| company_name | s_name | location | package |
++--------------+--------+----------+---------+
+| Infosys      | Riya   | Delhi    |   40000 |
++--------------+--------+----------+---------+
+1 row in set (0.003 sec)
+
+MariaDB [te31104_db]> CREATE VIEW pds AS
+    -> SELECT Student.s_name,Student.CGPA,Student.s_branch,PlacementDrive.company_name,PlacementDrive.package,PlacementDrive.location
+    -> FROM Student,PlacementDrive
+    -> WHERE PlacementDrive.Drive_id=Student.Drive_id;
+Query OK, 0 rows affected (0.011 sec)
+
+MariaDB [te31104_db]> SELECT * FROM pds;
++-----------+------+----------+--------------+---------+-----------+
+| s_name    | CGPA | s_branch | company_name | package | location  |
++-----------+------+----------+--------------+---------+-----------+
+| Vidhi     |  8.6 | Comp     | Dell         |   59000 | Pune      |
+| Abhishek  |  9.6 | Comp     | Apple        |   96000 | Bangalore |
+| Harsh     |  8.5 | EnTC     | Barclays     |   25000 | Mumbai    |
+| Riya      |  6.7 | IT       | Infosys      |   40000 | Delhi     |
+| Yash      |  6.5 | Comp     | PhonePe      |   36000 | Chennai   |
+| Sunand    |  8.3 | IT       | Samsung      |   45000 | Delhi     |
+| Siddhi    |  9.4 | EnTC     | Facebook     |   75000 | Hyderabad |
+| Vaishnavi |  6.9 | IT       | Google       |   89000 | Bangalore |
+| Satyajit  |  9.2 | Comp     | Microsoft    |   92000 | Kolkata   |
+| Disha     |  8.9 | Comp     | Wipro        |   29000 | Pune      |
++-----------+------+----------+--------------+---------+-----------+
+10 rows in set (0.123 sec)
+
+MariaDB [te31104_db]> CREATE INDEX s_idx
+    -> ON Student(s_name);
+Query OK, 0 rows affected (0.028 sec)
+Records: 0  Duplicates: 0  Warnings: 0

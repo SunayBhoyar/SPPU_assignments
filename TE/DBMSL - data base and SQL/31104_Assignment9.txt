@@ -1,0 +1,395 @@
+> use Movie
+switched to db Movie
+> db.createCollection('Review')
+{ "ok" : 1 }
+> db.Review.insertOne({'_id':1,'movie_name':'The Last Airbender','name':{'first_name':'Aarush','last_name':'Balkundi'},'review_text':'One of the Worst Movies I have ever seen. Terrible acting and poor storytelling','rating(1-5)':1})
+{ "acknowledged" : true, "insertedId" : 1 }
+> db.Review.insertOne({'_id':2,'movie_name':'Doctor Strange','name':{'first_name':'Aditya','last_name':'Mittal'},'review_text':'Mind-bending, visually stunning','rating(1-5)':4})
+{ "acknowledged" : true, "insertedId" : 2 }
+> db.Review.insertOne({'_id':3,'movie_name':'Avengers:Endgame','name':{'first_name':'Aniruddha','last_name':'Birage'},'review_text':'A grand conclusion. A masterpiece!','rating(1-5)':5})
+{ "acknowledged" : true, "insertedId" : 3 }
+> db.Review.insertOne({'_id':4,'movie_name':'Transformers:Revenge of the Fallen','name':{'first_name':'Aryan','last_name':'Jasuja'},'review_text':'A mindless explosion-fest. The plot was nonsensical.','rating(1-5)':2})
+{ "acknowledged" : true, "insertedId" : 4 }
+> db.Review.insertOne({'_id':5,'movie_name':'The Amazing Spider-Man 2','name':{'first_name':'Atharva','last_name':'Choudhari'},'review_text':'Decent Movie, but it had its flaws.Not as good as the previous Spider-Man films.','rating(1-5)':3})
+{ "acknowledged" : true, "insertedId" : 5 }
+> db.Review.find()
+\{ "_id" : 1, "movie_name" : "The Last Airbender", "name" : { "first_name" : "Aarush", "last_name" : "Balkundi" }, "review_text" : "One of the Worst Movies I have ever seen. Terrible acting and poor storytelling", "rating(1-5)" : 1 }
+{ "_id" : 2, "movie_name" : "Doctor Strange", "name" : { "first_name" : "Aditya", "last_name" : "Mittal" }, "review_text" : "Mind-bending, visually stunning", "rating(1-5)" : 4 }
+{ "_id" : 3, "movie_name" : "Avengers:Endgame", "name" : { "first_name" : "Aniruddha", "last_name" : "Birage" }, "review_text" : "A grand conclusion. A masterpiece!", "rating(1-5)" : 5 }
+{ "_id" : 4, "movie_name" : "Transformers:Revenge of the Fallen", "name" : { "first_name" : "Aryan", "last_name" : "Jasuja" }, "review_text" : "A mindless explosion-fest. The plot was nonsensical.", "rating(1-5)" : 2 }
+{ "_id" : 5, "movie_name" : "The Amazing Spider-Man 2", "name" : { "first_name" : "Atharva", "last_name" : "Choudhari" }, "review_text" : "Decent Movie, but it had its flaws.Not as good as the previous Spider-Man films.", "rating(1-5)" : 3 }
+> db.Review.find().pretty()
+{
+	"_id" : 1,
+	"movie_name" : "The Last Airbender",
+	"name" : {
+		"first_name" : "Aarush",
+		"last_name" : "Balkundi"
+	},
+	"review_text" : "One of the Worst Movies I have ever seen. Terrible acting and poor storytelling",
+	"rating(1-5)" : 1
+}
+{
+	"_id" : 2,
+	"movie_name" : "Doctor Strange",
+	"name" : {
+		"first_name" : "Aditya",
+		"last_name" : "Mittal"
+	},
+	"review_text" : "Mind-bending, visually stunning",
+	"rating(1-5)" : 4
+}
+{
+	"_id" : 3,
+	"movie_name" : "Avengers:Endgame",
+	"name" : {
+		"first_name" : "Aniruddha",
+		"last_name" : "Birage"
+	},
+	"review_text" : "A grand conclusion. A masterpiece!",
+	"rating(1-5)" : 5
+}
+{
+	"_id" : 4,
+	"movie_name" : "Transformers:Revenge of the Fallen",
+	"name" : {
+		"first_name" : "Aryan",
+		"last_name" : "Jasuja"
+	},
+	"review_text" : "A mindless explosion-fest. The plot was nonsensical.",
+	"rating(1-5)" : 2
+}
+{
+	"_id" : 5,
+	"movie_name" : "The Amazing Spider-Man 2",
+	"name" : {
+		"first_name" : "Atharva",
+		"last_name" : "Choudhari"
+	},
+	"review_text" : "Decent Movie, but it had its flaws.Not as good as the previous Spider-Man films.",
+	"rating(1-5)" : 3
+}
+
+> db.Review.find({$or:[{'name.first_name':'Aditya'},{'name.last_name':'Birage'}]}).pretty()
+{
+	"_id" : 2,
+	"movie_name" : "Doctor Strange",
+	"name" : {
+		"first_name" : "Aditya",
+		"last_name" : "Mittal"
+	},
+	"review_text" : "Mind-bending, visually stunning",
+	"rating(1-5)" : 4
+}
+{
+	"_id" : 3,
+	"movie_name" : "Avengers:Endgame",
+	"name" : {
+		"first_name" : "Aniruddha",
+		"last_name" : "Birage"
+	},
+	"review_text" : "A grand conclusion. A masterpiece!",
+	"rating(1-5)" : 5
+}
+
+> db.Review.find({$and:[{'name.first_name':'Aniruddha'},{'movie_name':'Avengers:Endgame'}]}).pretty()
+{
+	"_id" : 3,
+	"movie_name" : "Avengers:Endgame",
+	"name" : {
+		"first_name" : "Aniruddha",
+		"last_name" : "Birage"
+	},
+	"review_text" : "A grand conclusion. A masterpiece!",
+	"rating(1-5)" : 5
+}
+
+> db.Review.updateOne({'movie_name':'The Last Airbender'},{$set:{'review_text':'A complete disaster'}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 1 }
+> db.Review.find().pretty()
+{
+	"_id" : 1,
+	"movie_name" : "The Last Airbender",
+	"name" : {
+		"first_name" : "Aarush",
+		"last_name" : "Balkundi"
+	},
+	"review_text" : "A complete disaster",
+	"rating(1-5)" : 1
+}
+{
+	"_id" : 2,
+	"movie_name" : "Doctor Strange",
+	"name" : {
+		"first_name" : "Aditya",
+		"last_name" : "Mittal"
+	},
+	"review_text" : "Mind-bending, visually stunning",
+	"rating(1-5)" : 4
+}
+{
+	"_id" : 3,
+	"movie_name" : "Avengers:Endgame",
+	"name" : {
+		"first_name" : "Aniruddha",
+		"last_name" : "Birage"
+	},
+	"review_text" : "A grand conclusion. A masterpiece!",
+	"rating(1-5)" : 5
+}
+{
+	"_id" : 4,
+	"movie_name" : "Transformers:Revenge of the Fallen",
+	"name" : {
+		"first_name" : "Aryan",
+		"last_name" : "Jasuja"
+	},
+	"review_text" : "A mindless explosion-fest. The plot was nonsensical.",
+	"rating(1-5)" : 2
+}
+{
+	"_id" : 5,
+	"movie_name" : "The Amazing Spider-Man 2",
+	"name" : {
+		"first_name" : "Atharva",
+		"last_name" : "Choudhari"
+	},
+	"review_text" : "Decent Movie, but it had its flaws.Not as good as the previous Spider-Man films.",
+	"rating(1-5)" : 3
+}
+
+> db.Review.save({'_id':5,'movie_name':'Gravity','name':{'first_name':'Sunay','last_name':'Bhoyar'},'review_text':'A very good movie and a great experience.','rating(1-5)':5})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.Review.find().pretty()
+{
+	"_id" : 1,
+	"movie_name" : "The Last Airbender",
+	"name" : {
+		"first_name" : "Aarush",
+		"last_name" : "Balkundi"
+	},
+	"review_text" : "A complete disaster",
+	"rating(1-5)" : 1
+}
+{
+	"_id" : 2,
+	"movie_name" : "Doctor Strange",
+	"name" : {
+		"first_name" : "Aditya",
+		"last_name" : "Mittal"
+	},
+	"review_text" : "Mind-bending, visually stunning",
+	"rating(1-5)" : 4
+}
+{
+	"_id" : 3,
+	"movie_name" : "Avengers:Endgame",
+	"name" : {
+		"first_name" : "Aniruddha",
+		"last_name" : "Birage"
+	},
+	"review_text" : "A grand conclusion. A masterpiece!",
+	"rating(1-5)" : 5
+}
+{
+	"_id" : 4,
+	"movie_name" : "Transformers:Revenge of the Fallen",
+	"name" : {
+		"first_name" : "Aryan",
+		"last_name" : "Jasuja"
+	},
+	"review_text" : "A mindless explosion-fest. The plot was nonsensical.",
+	"rating(1-5)" : 2
+}
+{
+	"_id" : 5,
+	"movie_name" : "Gravity",
+	"name" : {
+		"first_name" : "Sunay",
+		"last_name" : "Bhoyar"
+	},
+	"review_text" : "A very good movie and a great experience.",
+	"rating(1-5)" : 5
+}
+
+> db.Review.find({'rating(1-5)':{$gt:3}}).pretty()
+{
+	"_id" : 2,
+	"movie_name" : "Doctor Strange",
+	"name" : {
+		"first_name" : "Aditya",
+		"last_name" : "Mittal"
+	},
+	"review_text" : "Mind-bending, visually stunning",
+	"rating(1-5)" : 4
+}
+{
+	"_id" : 3,
+	"movie_name" : "Avengers:Endgame",
+	"name" : {
+		"first_name" : "Aniruddha",
+		"last_name" : "Birage"
+	},
+	"review_text" : "A grand conclusion. A masterpiece!",
+	"rating(1-5)" : 5
+}
+{
+	"_id" : 5,
+	"movie_name" : "Gravity",
+	"name" : {
+		"first_name" : "Sunay",
+		"last_name" : "Bhoyar"
+	},
+	"review_text" : "A very good movie and a great experience.",
+	"rating(1-5)" : 5
+}
+
+> db.Review.find({}).sort({'rating(1-5)':1}).pretty()
+{
+	"_id" : 1,
+	"movie_name" : "The Last Airbender",
+	"name" : {
+		"first_name" : "Aarush",
+		"last_name" : "Balkundi"
+	},
+	"review_text" : "A complete disaster",
+	"rating(1-5)" : 1
+}
+{
+	"_id" : 4,
+	"movie_name" : "Transformers:Revenge of the Fallen",
+	"name" : {
+		"first_name" : "Aryan",
+		"last_name" : "Jasuja"
+	},
+	"review_text" : "A mindless explosion-fest. The plot was nonsensical.",
+	"rating(1-5)" : 2
+}
+{
+	"_id" : 2,
+	"movie_name" : "Doctor Strange",
+	"name" : {
+		"first_name" : "Aditya",
+		"last_name" : "Mittal"
+	},
+	"review_text" : "Mind-bending, visually stunning",
+	"rating(1-5)" : 4
+}
+{
+	"_id" : 3,
+	"movie_name" : "Avengers:Endgame",
+	"name" : {
+		"first_name" : "Aniruddha",
+		"last_name" : "Birage"
+	},
+	"review_text" : "A grand conclusion. A masterpiece!",
+	"rating(1-5)" : 5
+}
+{
+	"_id" : 5,
+	"movie_name" : "Gravity",
+	"name" : {
+		"first_name" : "Sunay",
+		"last_name" : "Bhoyar"
+	},
+	"review_text" : "A very good movie and a great experience.",
+	"rating(1-5)" : 5
+}
+
+> db.Review.find({}).sort({'rating(1-5)':-1}).limit(3).pretty()
+{
+	"_id" : 3,
+	"movie_name" : "Avengers:Endgame",
+	"name" : {
+		"first_name" : "Aniruddha",
+		"last_name" : "Birage"
+	},
+	"review_text" : "A grand conclusion. A masterpiece!",
+	"rating(1-5)" : 5
+}
+{
+	"_id" : 5,
+	"movie_name" : "Gravity",
+	"name" : {
+		"first_name" : "Sunay",
+		"last_name" : "Bhoyar"
+	},
+	"review_text" : "A very good movie and a great experience.",
+	"rating(1-5)" : 5
+}
+{
+	"_id" : 2,
+	"movie_name" : "Doctor Strange",
+	"name" : {
+		"first_name" : "Aditya",
+		"last_name" : "Mittal"
+	},
+	"review_text" : "Mind-bending, visually stunning",
+	"rating(1-5)" : 4
+}
+
+> db.Review.deleteOne({'_id':4})
+{ "acknowledged" : true, "deletedCount" : 1 }
+> db.Review.find().pretty()
+{
+	"_id" : 1,
+	"movie_name" : "The Last Airbender",
+	"name" : {
+		"first_name" : "Aarush",
+		"last_name" : "Balkundi"
+	},
+	"review_text" : "A complete disaster",
+	"rating(1-5)" : 1
+}
+{
+	"_id" : 2,
+	"movie_name" : "Doctor Strange",
+	"name" : {
+		"first_name" : "Aditya",
+		"last_name" : "Mittal"
+	},
+	"review_text" : "Mind-bending, visually stunning",
+	"rating(1-5)" : 4
+}
+{
+	"_id" : 3,
+	"movie_name" : "Avengers:Endgame",
+	"name" : {
+		"first_name" : "Aniruddha",
+		"last_name" : "Birage"
+	},
+	"review_text" : "A grand conclusion. A masterpiece!",
+	"rating(1-5)" : 5
+}
+{
+	"_id" : 5,
+	"movie_name" : "Gravity",
+	"name" : {
+		"first_name" : "Sunay",
+		"last_name" : "Bhoyar"
+	},
+	"review_text" : "A very good movie and a great experience.",
+	"rating(1-5)" : 5
+}
+
+> db.Review.deleteMany({'rating(1-5)':{$gt:3}})
+{ "acknowledged" : true, "deletedCount" : 3 }
+> db.Review.find().pretty()
+{
+	"_id" : 1,
+	"movie_name" : "The Last Airbender",
+	"name" : {
+		"first_name" : "Aarush",
+		"last_name" : "Balkundi"
+	},
+	"review_text" : "A complete disaster",
+	"rating(1-5)" : 1
+}
+
+> db.Review.deleteMany({})
+{ "acknowledged" : true, "deletedCount" : 1 }
+> db.Review.find().pretty()
+> db.Review.drop()
+true
+> db.dropDatabase()
+{ "dropped" : "Movie", "ok" : 1 }
