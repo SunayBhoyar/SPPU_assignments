@@ -1,6 +1,6 @@
-# CUDA Parallel Reduction
+# CUDA Parallel Matrix Multiplication and Vector Summation
 
-This repository contains a CUDA implementation of parallel reduction operations (minimum, maximum, sum, and average) on an array of integers.
+This repository contains CUDA implementations of parallel matrix multiplication and parallel vector summation.
 
 ## Requirements
 
@@ -98,20 +98,20 @@ This repository contains a CUDA implementation of parallel reduction operations 
 
 1. **Using Command Line**
    ```
-   nvcc code.cu -o code.exe
-   code.exe
+   nvcc code4a.cu -o code4a.exe
+   code4X.exe
    ```
 
 2. **Using Visual Studio**
    - Create a new CUDA project
-   - Add the `code.cu` file to your project
+   - Add the `code4X.cu` file to your project
    - Build and run the project
 
 ### Linux/macOS
 
 ```bash
-nvcc code.cu -o code
-./code
+nvcc code4X.cu -o code4X
+./code4X
 ```
 
 ### Google Colab
@@ -124,15 +124,15 @@ If you don't have a local CUDA setup, you can run the code using Google Colab:
 4. In a code cell, add and execute:
 
 ```python
-%%writefile parallel_reduction.cu
+%%writefile collabNotebook4.cu
 // Paste the entire CUDA code here
 ```
 
 5. Then compile and run:
 
 ```bash
-!nvcc collabNotebook3.cu -o collabNotebook3
-!./collabNotebook3
+!nvcc collabNotebook4.cu -o collabNotebook4
+!./collabNotebook4
 ```
 
 ## Verifying CUDA Installation
@@ -162,4 +162,5 @@ nvidia-smi
 
 ## File Description
 
-- `code.cu`: Contains the CUDA implementation of parallel reduction operations
+- `code4a.cu`: Contains the CUDA implementation of vector 
+- `code4b.cu`: Contains the CUDA implementation of matrix multiplication
