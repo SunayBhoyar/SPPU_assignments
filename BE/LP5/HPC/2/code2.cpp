@@ -1,4 +1,3 @@
-%%writefile parallel_sort.cpp
 #include <iostream>
 #include <vector>
 #include <algorithm>
