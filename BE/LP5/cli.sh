@@ -5,7 +5,7 @@ REPO_NAME="SPPU_assignments"
 GITHUB_API="https://api.github.com"
 RAW_CONTENT_URL="https://raw.githubusercontent.com"
 
-echo "Enter the subject (DAA / ML / BT / HPC / DL):"
+echo "Enter the subject HPC / DL :"
 read subject
 
 case "$subject" in
