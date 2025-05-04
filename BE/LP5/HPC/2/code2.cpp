@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 #include <omp.h>
 
 using namespace std;
@@ -8,8 +7,9 @@ using namespace std;
 // Sequential Bubble Sort
 void sequentialBubbleSort(vector<int>& arr) {
     int n = arr.size();
-    for (int i = 0; i < n - 1; ++i)
-        for (int j = 0; j < n - i - 1; ++j)
+    
+    for (int i = 0; i < n - 1; i++)
+        for (int j = 0 ; j < n - i -1; j++)
             if (arr[j] > arr[j + 1])
                 swap(arr[j], arr[j + 1]);
 }
@@ -17,7 +17,7 @@ void sequentialBubbleSort(vector<int>& arr) {
 // Parallel Bubble Sort using OpenMP
 void parallelBubbleSort(vector<int>& arr) {
     int n = arr.size();
-    for (int i = 0; i < n; ++i) {
+    for (int i = 0; i < n; i++) {
         #pragma omp parallel for
         for (int j = i % 2; j < n - 1; j += 2) {
             if (arr[j] > arr[j + 1]) {
@@ -27,28 +27,42 @@ void parallelBubbleSort(vector<int>& arr) {
     }
 }
 
-// Merge function for merge sort
-void merge(vector<int>& arr, int l, int m, int r) {
-    int n1 = m - l + 1, n2 = r - m;
-    vector<int> L(arr.begin() + l, arr.begin() + m + 1);
-    vector<int> R(arr.begin() + m + 1, arr.begin() + r + 1);
 
-    int i = 0, j = 0, k = l;
-    while (i < n1 && j < n2)
-        arr[k++] = (L[i] <= R[j]) ? L[i++] : R[j++];
-    while (i < n1)
-        arr[k++] = L[i++];
-    while (j < n2)
-        arr[k++] = R[j++];
+// Merge function for merge sort
+void merge(vector<int>& arr , int l , int r , int m){
+    int n1 = m - l + 1 ; 
+    int n2 = r - m ; 
+
+    vector<int> L(arr.begin()+l , arr.begin() + m + 1);
+    vector<int> R(arr.begin()+m+1 , arr.begin() + r + 1); 
+
+    int i = 0 ; 
+    int j = 0 ; 
+    int k = l ;
+
+    while (i < n1 && j < n2){
+        if(L[i] <= R[j]){
+            arr[k++] = L[i++] ; 
+        }else{
+            arr[k++] = R[j++] ; 
+        }
+    }
+    while(i < n1){
+        arr[k++] = arr[i++] ; 
+    }while(j < n2){
+        arr[k++] = arr[j++] ; 
+    }
+    
+
 }
 
 // Sequential Merge Sort
-void sequentialMergeSort(vector<int>& arr, int l, int r) {
-    if (l < r) {
-        int m = (l + r) / 2;
-        sequentialMergeSort(arr, l, m);
-        sequentialMergeSort(arr, m + 1, r);
-        merge(arr, l, m, r);
+void sequentialMergeSort(vector<int>& arr , int l , int r) {
+    if (l < r){
+        int m  = ( l + r ) / 2 ;
+        sequentialMergeSort(arr,l,m) ; 
+        sequentialMergeSort(arr,m+1,r) ;
+        merge(arr, l, r, m) ;
     }
 }
 

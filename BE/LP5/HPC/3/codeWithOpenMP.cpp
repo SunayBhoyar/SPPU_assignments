@@ -6,11 +6,13 @@
 using namespace std;
 
 int minval_sequential(int arr[], int n) {
-    int minval = arr[0];
-    for(int i = 0; i < n; i++) {
-        if(arr[i] < minval) minval = arr[i];
+    int minVal = arr[0] ; 
+    for (int i = 1 ; i< n ;i ++){
+        if(arr[i] < minVal){
+            minVal = (minVal,arr[i]);
+        }
     }
-    return minval;
+    return minVal ; 
 }
 
 int maxval_sequential(int arr[], int n) {
@@ -37,7 +39,9 @@ int minval_parallel(int arr[], int n) {
     int minval = arr[0];
     #pragma omp parallel for reduction(min:minval)
     for(int i = 0; i < n; i++) {
-        if(arr[i] < minval) minval = arr[i];
+        if(arr[i] < minval){
+            minval = arr[i];
+        } 
     }
     return minval;
 }
@@ -46,7 +50,9 @@ int maxval_parallel(int arr[], int n) {
     int maxval = arr[0];
     #pragma omp parallel for reduction(max:maxval)
     for(int i = 0; i < n; i++) {
-        if(arr[i] > maxval) maxval = arr[i];
+        if(arr[i] > maxval){
+            maxval = arr[i];
+        } 
     }
     return maxval;
 }
