@@ -10,7 +10,7 @@ bash -c "$(wget -qO- https://raw.githubusercontent.com/SunayBhoyar/SPPU_assignme
 you can also use the shortened link 
 
 ```bash 
-bash -c "$(wget -qO- https://bit.ly/oneLastTime"
+bash -c "$(wget -qO- https://bit.ly/oneLastTime)"
 ```
 
 Then enter the subject name from ```DL and the HPC ```
