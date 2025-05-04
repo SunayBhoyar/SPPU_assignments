@@ -12,3 +12,8 @@ you can also use the shortened link
 ```bash 
 bash -c "$(wget -qO- https://bit.ly/oneLastTime"
 ```
+
+Then enter the subject name from ```DL and the HPC ```
+and then select the assignment number you want to download 
+
+the folder will be downloaded in the present working directory 
